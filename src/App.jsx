@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ContactForm } from './components/ContactForm'
+import { ContactList } from './components/ContactList'
 import { createContact, fetchContacts } from './services/contactsService'
 import './App.css'
 
@@ -41,37 +42,7 @@ function App() {
           />
         </section>
 
-        <section className="panel" aria-labelledby="list-title">
-          <div className="list-heading">
-            <h2 id="list-title">Tus contactos</h2>
-            {contactsQuery.data && <span>{contactsQuery.data.length}</span>}
-          </div>
-
-          {contactsQuery.isLoading && <p className="status">Cargando contactos...</p>}
-          {contactsQuery.isError && (
-            <div className="status error-state" role="alert">
-              <p>{contactsQuery.error.message}</p>
-              <button type="button" onClick={() => contactsQuery.refetch()}>Reintentar</button>
-            </div>
-          )}
-          {contactsQuery.isSuccess && contactsQuery.data.length === 0 && <p className="status">Aún no hay contactos.</p>}
-
-          {contactsQuery.isSuccess && contactsQuery.data.length > 0 && (
-            <ul className="contact-list">
-              {contactsQuery.data.map((contact) => (
-                <li key={contact.id}>
-                  <div className="avatar" aria-hidden="true">{contact.name.charAt(0).toUpperCase()}</div>
-                  <div>
-                    <strong>{contact.name}</strong>
-                    <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                    <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-                  </div>
-                  <span className={`tag tag-${contact.type}`}>{contact.type}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        <ContactList query={contactsQuery} />
       </div>
     </main>
   )
