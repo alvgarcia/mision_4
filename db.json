@@ -13,6 +13,13 @@
       "email": "carlos@ejemplo.com",
       "phone": "623456789",
       "type": "proveedor"
+    },
+    {
+      "name": "Alvaro Garcia",
+      "email": "alvaro@ejemplo.com",
+      "phone": "66666666",
+      "type": "cliente",
+      "id": "LypXoXR_71o"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
