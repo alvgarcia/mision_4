@@ -1,0 +1,18 @@
+{
+  "contacts": [
+    {
+      "id": "1",
+      "name": "Ana García",
+      "email": "ana@ejemplo.com",
+      "phone": "612345678",
+      "type": "cliente"
+    },
+    {
+      "id": "2",
+      "name": "Carlos Ruiz",
+      "email": "carlos@ejemplo.com",
+      "phone": "623456789",
+      "type": "proveedor"
+    }
+  ]
+}
