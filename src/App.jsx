@@ -1,17 +1,7 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { ContactForm } from './components/ContactForm'
 import './App.css'
-
-const contactSchema = z.object({
-  name: z.string().trim().min(2, 'El nombre debe tener al menos 2 caracteres.').max(60, 'El nombre no puede superar 60 caracteres.'),
-  email: z.string().trim().email('Introduce un correo electrónico válido.').max(100, 'El correo no puede superar 100 caracteres.'),
-  phone: z.string().trim().regex(/^[0-9\s+()-]{6,20}$/, 'Introduce un teléfono válido.'),
-  type: z.enum(['cliente', 'proveedor', 'personal'], {
-    error: 'Selecciona un tipo de contacto.',
-  }),
-})
 
 const contactResponseSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -49,15 +39,6 @@ async function createContact(contact) {
 
 function App() {
   const queryClient = useQueryClient()
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(contactSchema),
-    defaultValues: { name: '', email: '', phone: '', type: 'cliente' },
-  })
 
   const contactsQuery = useQuery({
     queryKey: ['contacts'],
@@ -68,7 +49,6 @@ function App() {
     mutationFn: createContact,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['contacts'] })
-      reset()
     },
   })
 
@@ -83,42 +63,16 @@ function App() {
       <div className="layout">
         <section className="panel" aria-labelledby="form-title">
           <h2 id="form-title">Nuevo contacto</h2>
-          <form onSubmit={handleSubmit((contact) => createMutation.mutate(contact))} noValidate>
-            <div className="field">
-              <label htmlFor="name">Nombre</label>
-              <input id="name" {...register('name')} aria-invalid={Boolean(errors.name)} />
-              {errors.name && <span className="error" role="alert">{errors.name.message}</span>}
-            </div>
-
-            <div className="field">
-              <label htmlFor="email">Correo electrónico</label>
-              <input id="email" type="email" {...register('email')} aria-invalid={Boolean(errors.email)} />
-              {errors.email && <span className="error" role="alert">{errors.email.message}</span>}
-            </div>
-
-            <div className="field">
-              <label htmlFor="phone">Teléfono</label>
-              <input id="phone" {...register('phone')} aria-invalid={Boolean(errors.phone)} />
-              {errors.phone && <span className="error" role="alert">{errors.phone.message}</span>}
-            </div>
-
-            <div className="field">
-              <label htmlFor="type">Tipo</label>
-              <select id="type" {...register('type')} aria-invalid={Boolean(errors.type)}>
-                <option value="cliente">Cliente</option>
-                <option value="proveedor">Proveedor</option>
-                <option value="personal">Personal</option>
-              </select>
-              {errors.type && <span className="error" role="alert">{errors.type.message}</span>}
-            </div>
-
-            <button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? 'Guardando...' : 'Añadir contacto'}
-            </button>
-
-            {createMutation.isSuccess && <p className="success" role="status">Contacto añadido correctamente.</p>}
-            {createMutation.isError && <p className="error" role="alert">{createMutation.error.message}</p>}
-          </form>
+          <ContactForm
+            onSubmit={(contact, options) =>
+              createMutation.mutate(contact, {
+                onSuccess: options.onSuccess,
+              })
+            }
+            isPending={createMutation.isPending}
+            isSuccess={createMutation.isSuccess}
+            error={createMutation.error}
+          />
         </section>
 
         <section className="panel" aria-labelledby="list-title">
