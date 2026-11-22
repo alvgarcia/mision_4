@@ -14,5 +14,6 @@
       "phone": "623456789",
       "type": "proveedor"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
